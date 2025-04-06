@@ -1,45 +1,54 @@
-export function imageTemplate(item) {
-  const {
-    webformatURL,
-    largeImageURL,
-    tags,
-    likes,
-    views,
-    comments,
-    downloads,
-  } = item;
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+const gallery = document.querySelector('.gallery');
 
-  return `<li class="gallery-item">
-          <a class="gallery-link" href="${largeImageURL}" onclick="return false;">
-            <img
-              class="gallery-image"
-              src="${webformatURL}"
-              alt="${tags}"
-            />
-          </a>
-          <div class="gallery-wrapper">
-            <ul class="gallery-group">
-              <li class="gallery-list">
-                <h2 class="gallery-subtitle">Likes</h2>
-                <p class="gallery-txt">${likes}</p>
-              </li>
-              <li class="gallery-list">
-                <h2 class="gallery-subtitle">Views</h2>
-                <p class="gallery-txt">${views}</p>
-              </li>
-              <li class="gallery-list">
-                <h2 class="gallery-subtitle">Comments</h2>
-                <p class="gallery-txt">${comments}</p>
-              </li>
-              <li class="gallery-list">
-                <h2 class="gallery-subtitle">Downloads</h2>
-                <p class="gallery-txt">${downloads}</p>
-              </li>
-            </ul>
-          </div>
-        </li>`;
+export function fetchGallery(data) {
+  gallery.insertAdjacentHTML('beforeend', markupGallery(data));
+
+  lightbox.refresh();
 }
 
-export function imagesTemplate(arr) {
-  return arr.map(imageTemplate).join('');
+function markupGallery(data) {
+  return data.hits
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `
+				<li class="gallery-item hvr-grow">
+					<a class="gallery-link" href="${largeImageURL}">
+						<figure class="gallery-figure ">
+							<img class="gallery-image" src="${webformatURL}" alt="${tags}" loading="lazy">
+							<figcaption class="gallery-figcaption">
+								<ul class="img-content-wrapper">
+									<li>Likes<span>${likes}</span></li>
+									<li>Views<span>${views}</span></li>
+									<li>Comments<span>${comments}</span></li>
+									<li>Downloads<span>${downloads}</span></li>
+								</ul>
+							</figcaption>
+						</figure>
+					</a>
+				</li>
+		`
+    )
+    .join('');
+}
+
+export function fetchLoader() {
+  gallery.insertAdjacentHTML(
+    'beforeend',
+    `<div class='loader-wrapper'>
+        <div class='loader'></div>
+    </div>`
+  );
 }
